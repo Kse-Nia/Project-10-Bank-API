@@ -1,23 +1,24 @@
+import { Link } from "react-router-dom";
 import logo from "../../assets/argentBankLogo.png";
 
 const Navbar = () => {
   return (
-    // add condition login logout
+    // Add condition login/logout
     <div>
       <nav className="main-nav">
-        <a className="main-nav-logo" href="./index.html">
+        <Link className="main-nav-logo" to="/">
           <img
             className="main-nav-logo-image"
             src={logo}
             alt="Argent Bank Logo"
           />
           <h1 className="sr-only">Argent Bank</h1>
-        </a>
+        </Link>
         <div>
-          <a className="main-nav-item" href="./sign-in.html">
+          <Link className="main-nav-item" to="/sign-in">
             <i className="fa fa-user-circle"></i>
             Sign In
-          </a>
+          </Link>
         </div>
       </nav>
     </div>
