@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { API_ENDPOINTS } from "../../config/api";
 
-// Type for the slice state
+// TS Types for User State
 interface UserState {
   token: string | null;
   userInfo: {
@@ -19,11 +20,11 @@ const initialState: UserState = {
   error: null,
 };
 
-// User login
+// User Login
 export const loginUser = createAsyncThunk(
   "user/login",
   async (credentials: { email: string; password: string }, thunkAPI) => {
-    const response = await fetch("http://localhost:3001/api/v1/user/login", {
+    const response = await fetch(API_ENDPOINTS.LOGIN, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
@@ -32,7 +33,7 @@ export const loginUser = createAsyncThunk(
       return thunkAPI.rejectWithValue("Email ou mot de passe incorrect");
     }
     const data = await response.json();
-    return data.body.token; // le JWT
+    return data.body.token;
   },
 );
 
@@ -41,7 +42,7 @@ export const fetchUserProfile = createAsyncThunk(
   "user/fetchProfile",
   async (_, thunkAPI) => {
     const state = thunkAPI.getState() as { user: UserState };
-    const response = await fetch("http://localhost:3001/api/v1/user/profile", {
+    const response = await fetch(API_ENDPOINTS.USER_PROFILE, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,7 +53,7 @@ export const fetchUserProfile = createAsyncThunk(
       return thunkAPI.rejectWithValue("Impossible de récupérer le profil");
     }
     const data = await response.json();
-    return data.body; // Return user info
+    return data.body;
   },
 );
 
@@ -61,7 +62,7 @@ export const updateUserProfile = createAsyncThunk(
   "user/updateProfile",
   async (profile: { firstName: string; lastName: string }, thunkAPI) => {
     const state = thunkAPI.getState() as { user: UserState };
-    const response = await fetch("http://localhost:3001/api/v1/user/profile", {
+    const response = await fetch(API_ENDPOINTS.USER_PROFILE, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export const updateUserProfile = createAsyncThunk(
     });
     if (!response.ok) {
       return thunkAPI.rejectWithValue(
-        "Erreur - Impossible de mettre à jour le profil",
+        "Erreur: mise à jour du profil utilisateur impossible",
       );
     }
     const data = await response.json();
@@ -79,12 +80,12 @@ export const updateUserProfile = createAsyncThunk(
   },
 );
 
-// Slice
+// Slice User State Management
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // Logout
+    // LogOut
     logout: (state) => {
       state.token = null;
       state.userInfo = null;
@@ -99,22 +100,42 @@ const userSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
+      // Login Success
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.token = action.payload;
         localStorage.setItem("token", action.payload);
       })
+      // Login Error
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })
       // Fetch User Profile
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.userInfo = action.payload;
       })
-      // Update User
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Update User Profile
+      .addCase(updateUserProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.userInfo = action.payload;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       });
   },
 });
