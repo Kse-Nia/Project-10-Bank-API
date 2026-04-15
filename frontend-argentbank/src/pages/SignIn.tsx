@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import FormSignIn from "../components/Form/FormSignIn"; // Form component sign-in
 
 const SignIn = () => {
