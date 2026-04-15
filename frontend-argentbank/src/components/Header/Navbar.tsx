@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { logout } from "../../store/slices/userSlice";
+import { logout } from "../../store/slices/userSlice"; // Import the logout action slice
 import logo from "../../assets/argentBankLogo.png";
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
-  const { token } = useAppSelector((state) => state.user);
+  const { token, userInfo } = useAppSelector((state) => state.user);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -24,10 +24,16 @@ const Navbar = () => {
         </Link>
         <div>
           {token ? (
-            <button type="button" className="main-nav-item" onClick={handleLogout}>
-              <i className="fa fa-user-circle"></i>
-              Sign Out
-            </button>
+            <>
+              <Link className="main-nav-item" to="/profile">
+                <i className="fa fa-user-circle"></i>
+                {userInfo?.firstName || "User"}
+              </Link>
+              <button type="button" className="main-nav-item" onClick={handleLogout}>
+                <i className="fa fa-sign-out"></i>
+                Sign Out
+              </button>
+            </>
           ) : (
             <Link className="main-nav-item" to="/sign-in">
               <i className="fa fa-user-circle"></i>
