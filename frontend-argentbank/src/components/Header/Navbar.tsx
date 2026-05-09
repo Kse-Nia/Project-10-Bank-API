@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { logout } from "../../store/slices/userSlice"; // Import the logout action slice
+import { logout } from "../../store/slices/userSlice"; // Import LogOut action from userSlice
 import logo from "../../assets/argentBankLogo.png";
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook to redirect after logout
   const { token, userInfo } = useAppSelector((state) => state.user);
 
   const handleLogout = () => {
