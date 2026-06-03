@@ -29,7 +29,7 @@ const Navbar = () => {
             <>
               <Link className="main-nav-item" to="/profile">
                 <i className="fa fa-user-circle"></i>
-                {userInfo?.firstName || "User"}
+                {userInfo?.firstName}
               </Link>
               <button
                 type="button"

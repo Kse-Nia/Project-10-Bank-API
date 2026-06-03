@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { API_ENDPOINTS } from "../../config/api";
+import { API_ENDPOINTS } from "../../config/api"; // 
 
 // TS Types for User State
 interface UserState {
@@ -15,11 +15,12 @@ interface UserState {
 
 const initialState: UserState = {
   token: localStorage.getItem("token") || null,
+  userInfo: localStorage.getItem("userInfo")
+    ? JSON.parse(localStorage.getItem("userInfo") as string)
+    : null,
   isLoading: false,
   error: null,
-  userInfo: null,
 };
-
 // User Login
 export const loginUser = createAsyncThunk(
   "user/login",
@@ -72,7 +73,7 @@ export const updateUserProfile = createAsyncThunk(
     });
     if (!response.ok) {
       return thunkAPI.rejectWithValue(
-        "Erreur: impossible de modifier le profil",
+        "Erreur: impossible de modifier les données utilisateur",
       );
     }
     const data = await response.json();
@@ -90,52 +91,58 @@ const userSlice = createSlice({
       state.token = null;
       state.userInfo = null;
       state.error = null;
+      localStorage.removeItem("userInfo");
       localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder
       //  Login
-      .addCase(loginUser.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      // Login Success
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.token = action.payload;
         localStorage.setItem("token", action.payload);
       })
-      // Login Error
-      .addCase(loginUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-      // Fetch User Profile
-      .addCase(fetchUserProfile.pending, (state) => {
+      .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+        state.userInfo = null;
+      })
+      // Fetch User Profile
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.isLoading = false;
         state.userInfo = action.payload;
+        localStorage.setItem("userInfo", JSON.stringify(action.payload));
+      })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.userInfo = null;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+        state.userInfo = null;
       })
-      // Update User Profile
-      .addCase(updateUserProfile.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
+      // Update User Profile Info
       .addCase(updateUserProfile.fulfilled, (state, action) => {
         state.isLoading = false;
         state.userInfo = action.payload;
+        localStorage.setItem("userInfo", JSON.stringify(action.payload));
+      })
+      .addCase(updateUserProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.userInfo = null;
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+        state.userInfo = null;
       });
   },
 });

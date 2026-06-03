@@ -1,6 +1,6 @@
 import { useAppSelector } from "../store/hooks";
 
-const UserProfile = () => {
+const UserProfile: React.FC = () => {
   const { userInfo } = useAppSelector((state) => state.user);
 
   return (
