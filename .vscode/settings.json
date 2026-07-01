@@ -1,0 +1,6 @@
+{
+    "yaml.disableSchemaDetection": [],
+    "yaml.schemas": {
+        "openapi:v2": "file:///Users/kseniya/Desktop/Git/Project-10-Bank-API/swagger.yaml"
+    }
+}
