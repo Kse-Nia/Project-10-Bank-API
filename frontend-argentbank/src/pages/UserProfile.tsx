@@ -1,7 +1,13 @@
+import React from "react";
 import { useAppSelector } from "../store/hooks";
+import { useAppDispatch } from "../store/hooks";
+import { updateUserProfile } from "../store/slices/userSlice"; // Import update User slice
+import FormEditName from "../components/Form/FormEditProfile"; // Update User Data Form
 
 const UserProfile: React.FC = () => {
   const { userInfo } = useAppSelector((state) => state.user);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const dispatch = useAppDispatch();
 
   return (
     <main className="main bg-dark">
@@ -11,7 +17,20 @@ const UserProfile: React.FC = () => {
           <br />
           {userInfo ? `${userInfo.firstName} ${userInfo.lastName}!` : "User!"}
         </h1>
-        <button className="edit-button">Edit Name</button>
+        {isEditing && userInfo ? (
+          <FormEditName
+            user={userInfo!}
+            onSubmit={(updatedProfile) => {
+              dispatch(updateUserProfile(updatedProfile));
+              setIsEditing(false);
+            }}
+            onCancel={() => setIsEditing(false)}
+          />
+        ) : (
+          <button className="edit-button" onClick={() => setIsEditing(true)}>
+            Edit Name
+          </button>
+        )}
       </div>
       <h2 className="sr-only">Accounts</h2>
       <section className="account">

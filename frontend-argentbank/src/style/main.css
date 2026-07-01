@@ -71,7 +71,7 @@ body {
 }
 
 .hero {
-  background-image: url('../assets/bank-tree.jpeg');
+  background-image: url("../assets/bank-tree.jpeg");
   background-position: 0 -50px;
   background-size: cover;
   background-repeat: no-repeat;
@@ -288,4 +288,31 @@ body {
   .transaction-button {
     width: 200px;
   }
+}
+
+/* Update profile */
+
+.form-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.form-group-input {
+  color: #b3bcc7;
+  height: 2rem;
+  padding: 0.1em;
+}
+
+.save-btn,
+.cancel-btn {
+  width: 10%;
+  border-color: #5458ec;
+  border-style: solid;
+  background-color: #ffff;
+  color: #5458ec;
+  font-size: 1em;
+  padding: 5px;
+  margin-top: 1rem;
 }

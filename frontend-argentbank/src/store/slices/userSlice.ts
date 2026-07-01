@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { API_ENDPOINTS } from "../../config/api"; // 
+import { API_ENDPOINTS } from "../../config/api"; //
 
 // TS Types for User State
 interface UserState {
@@ -101,6 +101,7 @@ const userSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.token = action.payload;
+        state.error = null;
         localStorage.setItem("token", action.payload);
       })
       .addCase(loginUser.pending, (state) => {

@@ -1,9 +1,9 @@
-import { useState, FormEvent } from 'react';
+import { useState } from "react";
+import { FormEvent } from "react";
 
 interface UserProfile {
   firstName: string;
   lastName: string;
-  email: string;
 }
 
 interface FormEditProfileProps {
@@ -12,40 +12,44 @@ interface FormEditProfileProps {
   onCancel?: () => void;
 }
 
-export default function FormEditProfile({ user, onSubmit, onCancel }: FormEditProfileProps) {
+export default function FormEditProfile({
+  user,
+  onSubmit,
+  onCancel,
+}: FormEditProfileProps) {
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
-  const [email, setEmail] = useState(user.email);
-  const [error, setError] = useState('');
+  //  const [error, setError] = useState("");
+  const [error, setError] = useState("" || null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!firstName.trim() || !lastName.trim() || !email.trim()) {
-      setError('Tous les champs sont requis.');
+    if (!firstName.trim() || !lastName.trim()) {
+      setError("Tous les champs sont requis.");
       return;
     }
-    setError('');
-    onSubmit({ firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim() });
+    setError("");
+    onSubmit({
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+    });
   };
 
   return (
     <form className="form-edit-profile" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="firstName">Prénom</label>
         <input
           id="firstName"
+          className="form-group-input"
           type="text"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
           placeholder="Prénom"
           required
         />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="lastName">Nom</label>
         <input
           id="lastName"
+          className="form-group-input"
           type="text"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
@@ -53,28 +57,18 @@ export default function FormEditProfile({ user, onSubmit, onCancel }: FormEditPr
           required
         />
       </div>
-
-      <div className="form-group">
-        <label htmlFor="email">Adresse e-mail</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-      </div>
-
       {error && <p className="form-error">{error}</p>}
-
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary">
-          Enregistrer
+        <button type="submit" className="btn btn-primary save-btn">
+          Save
         </button>
         {onCancel && (
-          <button type="button" className="btn btn-secondary" onClick={onCancel}>
-            Annuler
+          <button
+            type="button"
+            className="btn btn-secondary cancel-btn"
+            onClick={onCancel}
+          >
+            Cancel
           </button>
         )}
       </div>
