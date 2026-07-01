@@ -117,7 +117,7 @@ paths:
       parameters:
         - in: path
           name: user_id
-          description: User transaction for a specific month
+          description: User transaction for a month
           required: true
           type: string
         - in: query
