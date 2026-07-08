@@ -10,7 +10,7 @@ const UserProfile: React.FC = () => {
   const dispatch = useAppDispatch();
 
   return (
-    <main className="main bg-dark">
+    <>
       <div className="header">
         <h1>
           Welcome back
@@ -63,7 +63,7 @@ const UserProfile: React.FC = () => {
           <button className="transaction-button">View transactions</button>
         </div>
       </section>
-    </main>
+    </>
   );
 };
 
