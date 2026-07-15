@@ -19,7 +19,7 @@ export default function FormEditProfile({
 }: FormEditProfileProps) {
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
-  const [error, setError] = useState("" || null);
+  const [error, setError] = useState<string | null>(null); // State to hold error messages
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,7 +27,7 @@ export default function FormEditProfile({
       setError("Tous les champs sont requis.");
       return;
     }
-    setError("");
+    setError("null");
     onSubmit({
       firstName: firstName.trim(),
       lastName: lastName.trim(),
