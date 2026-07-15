@@ -105,31 +105,51 @@ paths:
           description: Unauthorized
         '500':
           description: Internal Server Error
+  # Endpoints Accounts
+  /accounts:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Accounts Module
+      summary: Get User Accounts
+      description: API for fetching all accounts of the authenticated user
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: User accounts retrieved successfully
+          schema:
+            $ref: '#/definitions/AccountsApiResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
   # Endpoints User Transactions
-  /user/{user_id}/transactions:
+  /accounts/{accountId}/transactions:
     get:
       security:
         - Bearer: []
       tags:
         - Transactions Module
-      summary: Get User Transactions
-      description: API for fetching list of User's transactions for the month
+      summary: Get Account Transactions
+      description: API for fetching the transactions of an account for a given month
       parameters:
         - in: path
-          name: user_id
-          description: User transaction for a month
+          name: accountId
+          description: ID of the account
           required: true
           type: string
         - in: query
           name: month
-          description: Filter by month (YYYY-MM)
+          description: Filter transactions by month (format YYYY-MM). Defaults is to the current month
           required: false
           type: string
       produces:
         - application/json
       responses:
         '200':
-          description: User transactions retrieved successfully
+          description: Account transactions retrieved successfully
           schema:
             $ref: '#/definitions/TransactionsApiResponse'
         '400':
@@ -137,33 +157,33 @@ paths:
         '401':
           description: Unauthorized
         '404':
-          description: Transactions not found
+          description: Account not found
         '500':
           description: Internal Server Error
-  /user/{user_id}/transactions/{transaction_id}:
+  /accounts/{accountId}/transactions/{transactionId}:
     get:
       security:
         - Bearer: []
       tags:
         - Transactions Module
       summary: Get Transaction Details
-      description: API to get a specific transaction details
+      description: API for fetching the details of a specific transaction
       parameters:
         - in: path
-          name: user_id
-          description: User identification
+          name: accountId
+          description: ID of the account
           required: true
           type: string
         - in: path
-          name: transaction_id
-          description: Transaction identification
+          name: transactionId
+          description: ID of the transaction
           required: true
           type: string
       produces:
         - application/json
       responses:
         '200':
-          description: User transaction retrieved successfully
+          description: Transaction retrieved successfully
           schema:
             $ref: '#/definitions/TransactionApiResponse'
         '400':
@@ -179,22 +199,22 @@ paths:
         - Bearer: []
       tags:
         - Transactions Module
-      summary: Update Transaction
-      description: API for updating category and/or notes on a user's transaction
+      summary: Update Transaction Information
+      description: API for adding, updating or removing the category and/or notes of a transaction. Send a field with an empty string to clear its value
       parameters:
         - in: path
-          name: user_id
-          description: User identification
+          name: accountId
+          description: ID of the account
           required: true
           type: string
         - in: path
-          name: transaction_id
-          description: Transaction identification
+          name: transactionId
+          description: ID of the transaction
           required: true
           type: string
         - in: body
           name: body
-          description: Editable transaction fields
+          description: Editable transaction fields (category and notes)
           required: true
           schema:
             $ref: '#/definitions/UserTransaction'
@@ -291,64 +311,131 @@ definitions:
             type: string
           lastName:
             type: string
+  Account:
+    type: object
+    properties:
+      accountId:
+        type: string
+        example: '5f0f4a2b9d1c2a0017c3e4b1'
+      title:
+        type: string
+        example: 'Argent Bank Checking (x8349)'
+      balance:
+        type: integer
+        description: Account balance in cents (e.g. 208279 = $2,082.79)
+        example: 208279
+      balanceType:
+        type: string
+        example: 'Available Balance'
+      currency:
+        type: string
+        example: 'USD'
+  AccountsApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 200
+      message:
+        type: string
+        example: 'Accounts retrieved successfully'
+      body:
+        type: array
+        items:
+          $ref: '#/definitions/Account'
+  TransactionSummary:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        example: '5f0f4a2b9d1c2a0017c3e4b2'
+      accountId:
+        type: string
+        example: '5f0f4a2b9d1c2a0017c3e4b1'
+      date:
+        type: string
+        format: date-time
+        example: '2020-06-20T14:35:00Z'
+      description:
+        type: string
+        example: 'Golden Sun Bakery'
+      amount:
+        type: integer
+        description: Transaction amount in cents
+        example: 800
+      balance:
+        type: integer
+        description: Account balance after the transaction, in cents
+        example: 207479
+      currency:
+        type: string
+        example: 'USD'
+  Transaction:
+    type: object
+    properties:
+      transactionId:
+        type: string
+        example: '5f0f4a2b9d1c2a0017c3e4b2'
+      accountId:
+        type: string
+        example: '5f0f4a2b9d1c2a0017c3e4b1'
+      date:
+        type: string
+        format: date-time
+        example: '2020-06-20T14:35:00Z'
+      description:
+        type: string
+        example: 'Golden Sun Bakery'
+      amount:
+        type: integer
+        description: Transaction amount in cents
+        example: 800
+      balance:
+        type: integer
+        description: Account balance after the transaction, in cents
+        example: 207479
+      transactionType:
+        type: string
+        example: 'Electronic'
+      category:
+        type: string
+        example: 'Food'
+      notes:
+        type: string
+        example: 'Lunch with the team'
+      currency:
+        type: string
+        example: 'USD'
   TransactionsApiResponse:
     type: object
     properties:
       status:
         type: integer
+        example: 200
       message:
         type: string
+        example: 'Transactions retrieved successfully'
       body:
         type: array
         items:
-          type: object
-          properties:
-            transaction_id:
-              type: string
-            date:
-              type: string
-              format: date
-            description:
-              type: string
-            amount:
-              type: number
-              format: float
-            balance:
-              type: number
-              format: float
+          $ref: '#/definitions/TransactionSummary'
   TransactionApiResponse:
     type: object
     properties:
       status:
         type: integer
+        example: 200
       message:
         type: string
+        example: 'Transaction retrieved successfully'
       body:
-        type: object
-        properties:
-          transaction_id:
-            type: string
-          date:
-            type: string
-            format: date
-          description:
-            type: string
-          transactionType:
-            type: string
-          category:
-            type: string
-          notes:
-            type: string
-          amount:
-            type: number
-            format: float
-          balance:
-            type: number
-            format: float
+        $ref: '#/definitions/Transaction'
   UserTransaction:
     type: object
     properties:
       category:
         type: string
+        example: 'Food'
       notes:
         type: string
+        example: 'Lunch with the team'
