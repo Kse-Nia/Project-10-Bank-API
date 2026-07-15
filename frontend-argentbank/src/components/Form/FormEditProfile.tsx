@@ -19,7 +19,6 @@ export default function FormEditProfile({
 }: FormEditProfileProps) {
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
-  //  const [error, setError] = useState("");
   const [error, setError] = useState("" || null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
